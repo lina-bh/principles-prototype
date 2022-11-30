@@ -27,7 +27,7 @@ class Return(Movement):
         cur = DB.execute(
             """
             INSERT INTO
-            collection(deal_id, box_id, storage_id)
+            return(deal_id, box_id, storage_id)
             VALUES (?, ?, ?)
             RETURNING id
             """,

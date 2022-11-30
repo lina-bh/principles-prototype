@@ -32,11 +32,11 @@ class WarehouseRecord:
             id = DB.execute(
                 """
                 INSERT INTO
-                warehouse_record(warehouse_id, staff_id, collection_id)
+                warehouse_record(warehouse_id, staff_username, collection_id)
                 VALUES (?, ?, ?)
                 RETURNING id
                 """,
-                [warehouse.getID(), staff.getID(), ret.getID()],
+                [warehouse.getID(), staff.getUsername(), ret.getID()],
             ).fetchone()[0]
             return cls(id, warehouse, staff, ret)
         elif isinstance(operation, Return):  # if isinstance(operation, Return):
@@ -44,11 +44,11 @@ class WarehouseRecord:
             id = DB.execute(
                 """
                 INSERT INTO
-                warehouse_record(warehouse_id, staff_id, return_id)
+                warehouse_record(warehouse_id, staff_username, return_id)
                 VALUES (?, ?, ?)
                 RETURNING id
                 """,
-                [warehouse.getID(), staff.getID(), ret.getID()],
+                [warehouse.getID(), staff.getUsername(), ret.getID()],
             ).fetchone()[0]
             return cls(id, warehouse, staff, ret)
 
@@ -61,13 +61,13 @@ class WarehouseRecord:
             warehouse_record(
             id INTEGER PRIMARY KEY,
             warehouse_id INTEGER NOT NULL,
-            staff_id INTEGER NOT NULL,
+            staff_username TEXT NOT NULL,
             collection_id INTEGER,
             return_id INTEGER,
             FOREIGN KEY(warehouse_id) REFERENCES warehouse(id),
             FOREIGN KEY(collection_id) REFERENCES collection(id),
             FOREIGN KEY(return_id) REFERENCES return(id),
-            FOREIGN KEY(staff_id) REFERENCES staff_account(id)
+            FOREIGN KEY(staff_username) REFERENCES staff_account(username)
             );
             """
         )

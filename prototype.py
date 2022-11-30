@@ -7,6 +7,7 @@ from collection import Collection
 
 from connection import DB
 from deal import Deal
+from refund import Refund
 from returnclass import Return
 from specialdeal import SpecialDeal
 from staff import StaffMember, create_mike, create_lydia
@@ -112,7 +113,7 @@ lydia = StaffMember.loadByUsername("lydia")
 ret_deal = Deal.create(sub)
 ret = Return.create(deal, box, storage)
 print(ret_deal, "created for", ret)
-ret_record = WarehouseRecord.create(stockwell_warehouse, mike, ret)
+ret_record = WarehouseRecord.create(stockwell_warehouse, lydia, ret)
 print(
     "box",
     box.getID(),
@@ -134,7 +135,9 @@ print(
     "!!",
     special.getTerms(),
 )
-special_dealed = Deal.create(sub, special)
+special_order = Deal.create(sub, special)
 special_box = Box.create(account, 44, 35, 16)
-special_coll = Collection.create(special_deal, special_box, storage)
+special_coll = Collection.create(special_order, special_box, storage)
 print("oops, cancelled")
+refund = Refund.create(account, special_coll)
+print(refund)

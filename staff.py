@@ -16,6 +16,9 @@ class StaffMember:
     def getName(self):
         return self._name
 
+    def getUsername(self):
+        return self._username
+
     @classmethod
     def loadByUsername(cls, username: str):
         cur = DB.execute(

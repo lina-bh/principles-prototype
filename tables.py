@@ -1,6 +1,7 @@
 from box import Box
 from collection import Collection
 from customeraccount import CustomerAccount
+from refund import Refund
 from returnclass import Return
 from specialdeal import SpecialDeal
 from staff import StaffMember
@@ -24,3 +25,4 @@ def create_tables(db):
     StaffMember.create_tables(cur)
     Return.create_tables(cur)
     SpecialDeal.create_tables(cur)
+    Refund.create_tables(cur)
