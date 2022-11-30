@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Tuple
+from typing import List, Tuple
 
 from connection import DB
 from customeraccount import CustomerAccount
@@ -21,8 +21,18 @@ class Box:
     def getID(self):
         return self._id
 
+    def getBoxLocation(self):
+        cur = DB.execute(
+            """
+            SELECT warehouse_id
+            FROM box, collection, return, storage
+            WHERE box.id = ?
+            AND return.box_id """
+        )
+        raise NotImplementedError
+
     @classmethod
-    def create(cls, account: CustomerAccount, length, height, width):
+    def create(cls, account: CustomerAccount, length, height, width) -> Box:
         cur = DB.execute(
             """
             INSERT INTO
@@ -35,6 +45,43 @@ class Box:
         id = cur.fetchone()[0]
         DB.commit()
         return cls(id, length, height, width, account)
+
+    @classmethod
+    def loadById(cls, id, account=None):
+        cur = DB.execute(
+            """
+            SELECT account_id, length, height, width
+            FROM box
+            WHERE id = ?
+            """,
+            [id],
+        )
+        row = cur.fetchone()
+        if not row:
+            raise FileNotFoundError
+        return cls(
+            id,
+            row[1],
+            row[2],
+            row[3],
+            account if account else CustomerAccount.loadById(row[0]),
+        )
+
+    @classmethod
+    def loadBoxesForCustomer(cls, account: CustomerAccount) -> List[Box]:
+        cur = DB.execute(
+            """
+            SELECT id
+            FROM box
+            WHERE account_id = ?
+            """,
+            [account.getAccountNumber()],
+        )
+        rows = cur.fetchall()
+        boxes = []
+        for row in rows:
+            boxes.append(cls.loadById(row[0], account))
+        return boxes
 
     @staticmethod
     def create_tables(cur):

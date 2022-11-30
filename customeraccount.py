@@ -56,7 +56,7 @@ class CustomerAccount:
     def setPassword(self, password):
         self._password = crypt(password)
 
-    def store(self):
+    def store(self) -> None:
         cur = DB.cursor()
         cur.execute(
             """
@@ -71,7 +71,9 @@ class CustomerAccount:
         DB.commit()
 
     @staticmethod
-    def create(username: str, name: str, email: str, address: Address):
+    def create(
+        username: str, name: str, email: str, address: Address
+    ) -> CustomerAccount:
         cur = DB.cursor()
         cur.execute(
             "INSERT INTO account(username, email, address) VALUES (?, ?, ?);",
@@ -116,7 +118,7 @@ class CustomerAccount:
         )
 
     @staticmethod
-    def loadByUsername(username: str):
+    def loadByUsername(username: str) -> CustomerAccount:
         cur = DB.cursor()
         cur.execute(
             "SELECT id FROM account WHERE username = ?;",

@@ -35,6 +35,19 @@ class Storage:
     def getBox(self):
         return self._box
 
+    @classmethod
+    def loadAllByCustomer(cls, account):
+        raise NotImplementedError
+        cur = DB.execute(
+            """
+            SELECT id
+            FROM storage
+            JOIN subscription
+            ON subscription.username = ?
+            """,
+            [account.getUsername()],
+        )
+
     @staticmethod
     def create(
         deal: Deal, warehouse: Warehouse, box: Box, location: Tuple[int, int]

@@ -38,6 +38,21 @@ class SpecialDeal:
         id = cur.fetchone()[0]
         return cls(id, discount, terms, code)
 
+    @classmethod
+    def loadById(cls, id):
+        cur = DB.execute(
+            """
+            SELECT discount, terms, code
+            FROM specialDeal
+            WHERE id = ?
+            """,
+            [id],
+        )
+        row = cur.fetchone()
+        if not row:
+            raise FileNotFoundError
+        return cls(id, row[0], row[1], row[2])
+
     @staticmethod
     def create_tables(cur):
         cur.execute(

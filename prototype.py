@@ -57,6 +57,22 @@ def create_box_interactively(account):
     return Box.create(account, length, width, height)
 
 
+def create_invoice(account):
+    deals = Deal.loadDealsForCustomer(account)
+    total = 0.0
+    for deal in deals:
+        price = deal.getPrice()
+        if special := deal.getSpecial():
+            price = price * (100 - special.getDiscount()) / 100
+        total += price
+        print("ID", deal.getID(), "£", price)
+    print("total £", total)
+
+
+def exec(stmt, values):
+    return DB.execute(stmt, values).fetchall()
+
+
 create_tables(DB)
 create_mike()
 create_lydia()
@@ -141,3 +157,10 @@ special_coll = Collection.create(special_order, special_box, storage)
 print("oops, cancelled")
 refund = Refund.create(account, special_coll)
 print(refund)
+
+print(account.getName() + "'s", "boxes:")
+for box in Box.loadBoxesForCustomer(account):
+    print(box, "warehouse", stockwell_warehouse.getAddress())
+
+print("Invoice for", account.getName())
+create_invoice(account)
