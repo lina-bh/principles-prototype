@@ -17,7 +17,6 @@ from subscription import Subscription
 from tables import create_tables
 from warehouse import create_stockwell_warehouse
 from storage import Storage
-from silly import *
 from warehouserecord import WarehouseRecord
 
 
