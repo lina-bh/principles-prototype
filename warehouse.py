@@ -1,15 +1,22 @@
 from connection import DB
 from address import Address
+from copy import copy
 
 
 class Warehouse:
     def __init__(self, id, address, freespace):
-        self.id = id
-        self.address = address
-        self.freeSpace = freespace
+        self._id = id
+        self._address = address
+        self._free_space = freespace
 
     def __repr__(self):
-        return f"<Warehouse address={repr(self.address)} freeSpace={self.freeSpace}>"
+        return f"<Warehouse@{hex(id(self))} address={repr(self._address)} freeSpace={self._free_space}>"
+
+    def getID(self):
+        return self._id
+
+    def getAddress(self):
+        return copy(self._address)
 
     @staticmethod
     def create_tables(cur):

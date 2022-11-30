@@ -1,141 +1,26 @@
-from connection import DB
+from box import Box
+from collection import Collection
 from customeraccount import CustomerAccount
+from returnclass import Return
+from specialdeal import SpecialDeal
+from staff import StaffMember
+from storage import Storage
 from subscription import Subscription
 from warehouse import Warehouse
+from deal import Deal
+from warehouserecord import WarehouseRecord
 
 
-def create_tables():
-    cur = DB.cursor()
+def create_tables(db):
+    cur = db.cursor()
     CustomerAccount.create_tables(cur)
     Subscription.create_tables(cur)
     Warehouse.create_tables(cur)
-    cur.execute(
-        """
-    CREATE TABLE
-    IF NOT EXISTS
-    deal(
-    id INTEGER PRIMARY KEY,
-    storage_id INTEGER NOT NULL,
-    subscription_id INTEGER NOT NULL,
-    FOREIGN KEY(subscription_id) REFERENCES subscription(id)
-    );
-    """
-    )
-
-    cur.execute(
-        """
-    CREATE TABLE
-    IF NOT EXISTS
-    storage(
-    id INTEGER PRIMARY KEY,
-    deal_id INTEGER NOT NULL,
-    warehouse_id INTEGER NOT NULL,
-    row INTEGER NOT NULL,
-    shelf INTEGER NOT NULL,
-    FOREIGN KEY(deal_id) REFERENCES deal(id),
-    FOREIGN KEY(warehouse_id) REFERENCES warehouse(id)
-    );
-    """
-    )
-    cur.execute(
-        """
-    CREATE TABLE
-    IF NOT EXISTS
-    staff(
-    id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL,
-    username TEXT UNIQUE NOT NULL
-    );
-    """
-    )
-    cur.execute(
-        """
-    CREATE TABLE
-    IF NOT EXISTS
-    staff_account(
-    username TEXT PRIMARY KEY,
-    password TEXT NOT NULL,
-    phonenumber INTEGER NOT NULL,
-    staff_id INTEGER NOT NULL,
-    FOREIGN KEY(staff_id) REFERENCES staff(id)
-    );
-    """
-    )
-    cur.execute(
-        """
-    CREATE TABLE
-    IF NOT EXISTS
-    warehouse_record(
-    id INTEGER PRIMARY KEY,
-    warehouse_id INTEGER NOT NULL,
-    FOREIGN KEY(warehouse_id) REFERENCES warehouse(id)
-    );
-    """
-    )
-    cur.execute(
-        """
-    CREATE TABLE
-    IF NOT EXISTS
-    box(
-    id INTEGER PRIMARY KEY,
-    storage_id INTEGER NOT NULL,
-    length INTEGER NOT NULL,
-    width INTEGER NOT NULL,
-    height INTEGER NOT NULL,
-    FOREIGN KEY(storage_id) REFERENCES storage(id)
-    );
-    """
-    )
-    cur.execute(
-        """
-    CREATE TABLE
-    IF NOT EXISTS
-    collection(
-    id INTEGER PRIMARY KEY,
-    collection_id INTEGER NOT NULL,
-    deal_id INTEGER NOT NULL,
-    box_id INTEGER NOT NULL,
-    FOREIGN KEY(deal_id) REFERENCES deal(id),
-    FOREIGN KEY(box_id) REFERENCES box(id)
-    );
-    """
-    )
-    cur.execute(
-        """
-    CREATE TABLE
-    IF NOT EXISTS
-    return(
-    id INTEGER PRIMARY KEY,
-    return_id INTEGER NOT NULL,
-    deal_id INTEGER NOT NULL,
-    box_id INTEGER NOT NULL,
-    FOREIGN KEY(deal_id) REFERENCES deal(id),
-    FOREIGN KEY(box_id) REFERENCES box(id)
-    );
-    """
-    )
-    cur.execute(
-        """
-    CREATE TABLE
-    IF NOT EXISTS
-    refund(
-    id INTEGER PRIMARY KEY,
-    refund_id INTEGER NOT NULL,
-    account_id INTEGER NOT NULL,
-    FOREIGN KEY(refund_id) REFERENCES refund(id),
-    FOREIGN KEY(account_id) REFERENCES account(id)
-    );
-    """
-    )
-    cur.execute(
-        """
-    CREATE TABLE
-    IF NOT EXISTS
-    specialDeal(
-    id INTEGER PRIMARY KEY,
-    discount INTEGER NOT NULL,
-    terms TEXT NOT NULL,
-    code TEXT UNIQUE NOT NULL
-    );
-    """
-    )
+    Deal.create_tables(cur)
+    Storage.create_tables(cur)
+    Box.create_tables(cur)
+    Collection.create_tables(cur)
+    WarehouseRecord.create_tables(cur)
+    StaffMember.create_tables(cur)
+    Return.create_tables(cur)
+    SpecialDeal.create_tables(cur)

@@ -14,4 +14,4 @@ def connect_db(*, persistent=False, reinit=False):
     return DB
 
 
-connect_db()
+connect_db(persistent=False, reinit=True)

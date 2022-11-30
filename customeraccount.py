@@ -1,5 +1,6 @@
 from __future__ import annotations
 from crypt import crypt
+from copy import copy
 
 from address import Address
 from connection import DB
@@ -9,7 +10,7 @@ from visacheckaccount import VISACheckAccount
 class CustomerAccount:
     def __init__(
         self,
-        cusAccNum: int,
+        accNum: int,
         username: str,
         name: str,
         email: str,
@@ -17,28 +18,43 @@ class CustomerAccount:
         visacheck,
     ):
         # Python has no visibility specifiers
-        self.cusAccNum = cusAccNum
-        self.username = username
-        self.name = name
-        self.address = address
-        self.email = email
-        self.visacheck = visacheck
-        self.password = None
+        self._id = accNum
+        self._username = username
+        self._name = name
+        self._address = address
+        self._email = email
+        self._visacheck = visacheck
+        self._password = None
 
     def __repr__(self):
-        return f"<CustomerAccount cusAccNum={self.cusAccNum} username={self.username} name={self.name} address={self.address} email={self.email} self.visacheck? {bool(self.visacheck)}>"
+        return f"<CustomerAccount@{hex(id(self))} id={self._id} username={self._username} name={self._name} address={self._address} email={self._email} self.visacheck={self._visacheck}>"
+
+    def getAccountNumber(self):
+        return self._id
+
+    def getUsername(self):
+        return self._username
+
+    def getName(self):
+        return self._name
+
+    def getAddress(self):
+        return copy(self._address)
+
+    def getEmail(self):
+        return self._email
 
     def setName(self, name):
-        self.name = name
+        self._name = name
 
     def setAddress(self, address):
-        self.address = address
+        self._address = address
 
     def setEmail(self, email):
-        self.email = email
+        self._email = email
 
     def setPassword(self, password):
-        self.password = crypt(password)
+        self._password = crypt(password)
 
     def store(self):
         cur = DB.cursor()
@@ -50,7 +66,7 @@ class CustomerAccount:
             password = ?
             WHERE id = ?
             """,
-            [self.address.to_str(), self.email, self.password, self.cusAccNum],
+            [self._address.to_str(), self._email, self._password, self._id],
         )
         DB.commit()
 
@@ -89,7 +105,7 @@ class CustomerAccount:
             [id],
         )
         row = cur.fetchone()
-        print(row)
+        # print(row)
         return CustomerAccount(
             row[0],
             row[1],
@@ -129,12 +145,12 @@ class CustomerAccount:
         )
         cur.execute(
             """
-        CREATE TABLE
-        IF NOT EXISTS
-        customer(
-        name TEXT PRIMARY KEY,
-        username TEXT NOT NULL,
-        FOREIGN KEY(username) REFERENCES account(username)
-        );
-        """
+            CREATE TABLE
+            IF NOT EXISTS
+            customer(
+            name TEXT PRIMARY KEY,
+            username TEXT NOT NULL,
+            FOREIGN KEY(username) REFERENCES account(username)
+            );
+            """
         )
